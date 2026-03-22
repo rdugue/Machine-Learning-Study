@@ -16,9 +16,9 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 # 4. Import the class ABSOLUTELY (Notice there are NO dots before 'mdp')
-from mdp.mdp import TabularMDP 
+from mdp.tabular import TabularMDP 
 
-env = gym.make("FrozenLake-v1", map_name="8x8", render_mode='human', is_slippery=False)
+env = gym.make("FrozenLake-v1", map_name="8x8", render_mode='human', is_slippery=True)
 num_states = env.observation_space.n
 num_actions = env.action_space.n
 gamma = 0.99
@@ -41,7 +41,7 @@ mdp = TabularMDP(
     R=R
 )
 
-policy, V = mdp.policy_iteration()
+policy, V = mdp.value_iteration()
 
 state, info = env.reset()
 terminated = False
