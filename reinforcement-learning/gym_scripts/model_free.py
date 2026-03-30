@@ -14,8 +14,22 @@ parent_dir = os.path.dirname(current_dir)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 import model_free_control.primary as mfc
+import toy_text as tt
 
-env = gym.make("FrozenLake-v1", map_name="8x8", render_mode='human', is_slippery=True)
+env = input("Choose an environment (FrozenLake[1], Blackjack[2], CliffWalking[3], Taxi[4]): ")
+match env:
+    case "1":
+        env = tt.create_environment("FrozenLake-v1", render_mode='human')       
+    case "2":
+        env = tt.create_environment("Blackjack-v1", render_mode='human')
+    case "3":
+        env = tt.create_environment("CliffWalking-v0", render_mode='human')
+    case "4":
+        env = tt.create_environment("Taxi-v3", render_mode='human')
+    case _:
+        print("Invalid choice. Defaulting to FrozenLake.")
+        env = tt.create_environment("FrozenLake-v1", render_mode='human')
+# env = gym.make("FrozenLake-v1", map_name="8x8", render_mode='human', is_slippery=True)
 epsilon = 1.0
 epsilon_min = 0.01
 epsilon_decay = 0.9999
@@ -39,7 +53,7 @@ match algorithm:
         print("Invalid choice. Defaulting to Monte Carlo.")
 
 wins = 0
-num_episodes = 10000
+num_episodes = int(input("Enter the number of episodes for training (e.g., 10000): ") or "10000")
 
 for episode in range(num_episodes):
     state, info = env.reset()
