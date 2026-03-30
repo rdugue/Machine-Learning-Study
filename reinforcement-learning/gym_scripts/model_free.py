@@ -95,7 +95,6 @@ if wins == 0:
 
 
 # --- WATCHING THE AGENT ---
-env = gym.make("FrozenLake-v1", map_name="8x8", render_mode='human', is_slippery=False)
 state, info = env.reset()
 terminated = False
 truncated = False
