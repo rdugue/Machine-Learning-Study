@@ -16,9 +16,23 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 # 4. Import the class ABSOLUTELY (Notice there are NO dots before 'mdp')
-from mdp.mdp import TabularMDP 
+from mdp.tabular import TabularMDP 
+import toy_text as tt
 
-env = gym.make("FrozenLake-v1", map_name="8x8", render_mode='human', is_slippery=False)
+env = input("Choose an environment (FrozenLake[1], Blackjack[2], CliffWalking[3], Taxi[4]): ")
+match env:
+    case "1":
+        env = tt.create_environment("FrozenLake-v1", render_mode='human')       
+    case "2":
+        env = tt.create_environment("Blackjack-v1", render_mode='human')
+    case "3":
+        env = tt.create_environment("CliffWalking-v0", render_mode='human')
+    case "4":
+        env = tt.create_environment("Taxi-v3", render_mode='human')
+    case _:
+        print("Invalid choice. Defaulting to FrozenLake.")
+        env = tt.create_environment("FrozenLake-v1", render_mode='human')
+
 num_states = env.observation_space.n
 num_actions = env.action_space.n
 gamma = 0.99
@@ -41,7 +55,15 @@ mdp = TabularMDP(
     R=R
 )
 
-policy, V = mdp.policy_iteration()
+process = input("Choose a process (Value Iteration[1], Policy Iteration[2]): ")
+match process:
+    case "1":
+        policy, V = mdp.value_iteration()
+    case "2":
+        policy, V = mdp.policy_iteration()
+    case _:
+        print("Invalid choice. Defaulting to Value Iteration.")
+        policy, V = mdp.value_iteration()
 
 state, info = env.reset()
 terminated = False
