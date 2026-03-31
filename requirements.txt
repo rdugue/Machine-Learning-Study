@@ -5,3 +5,5 @@ tensorflow_datasets
 numpy
 pandas
 gymnasium[all]
+transformers
+datasets
