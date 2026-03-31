@@ -1,7 +1,7 @@
 tensorflow
 torch
 torchvision
+tensorflow_datasets
 numpy
 pandas
-gymnasium[toy-text]
-d2l
+gymnasium[all]
