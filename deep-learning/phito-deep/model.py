@@ -129,6 +129,11 @@ class SequentialBuilder:
         self.epochs_value = 1000
         self.loss_class = ls.MeanSquaredError()
 
+    def flatten(self):
+        """Add a Flatten layer."""
+        self.layers.append(b.Flatten())
+        return self
+
     def dense(self, input_size, output_size):
         """Add a Dense layer."""
         self.layers.append(b.Dense(input_size, output_size))

@@ -23,6 +23,25 @@ class Layer:
         raise NotImplementedError(f"Block '{self.name}' must implement backward method")
 
 
+class Flatten(Layer):
+    def __init__(self):
+        super().__init__("flatten")
+
+    def forward(self, X):
+        """
+        X: (batch_size, ...) -> (batch_size, ...)
+        """
+        self.cache["X"] = X
+        return X.reshape(X.shape[0], -1)
+
+    def backward(self, dL_dZ, alpha):
+        """
+        dL_dZ: (batch_size, ...) -> (batch_size, ...)
+        """
+        X = self.cache["X"]
+        return dL_dZ.reshape(X.shape)
+
+
 class Dense(Layer):
     def __init__(self, input_size, output_size):
         super().__init__("dense")
