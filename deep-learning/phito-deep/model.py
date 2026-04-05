@@ -9,7 +9,7 @@ class Sequential:
         self,
         *layers,
         alpha=0.01,
-        optimizer="sgd",
+        optimizer="adam",
         batch_size=1,
         epochs=1000,
         loss_class=ls.MeanSquaredError(),
@@ -48,19 +48,21 @@ class Sequential:
     def train(self, X, y):
         match self.optimizer:
             case "sgd":
-                losses = optimization.mini_batch_sgd(
-                    model=self,
-                    X=X,
-                    y=y,
-                    loss_class=self.loss_class,
-                    alpha=self.alpha,
-                    batch_size=self.batch_size,
-                    epochs=self.epochs,
-                )
+                optimizer = optimization.SGD(alpha=self.alpha)
+            case "adam":
+                optimizer = optimization.Adam(alpha=self.alpha)
             case _:
                 raise ValueError(f"{self.optimizer} is not a valid optimizer.")
 
-        return losses
+        return optimization.train_loop(
+            model=self,
+            X=X,
+            y=y,
+            optimizer=optimizer,
+            loss_class=self.loss_class,
+            batch_size=self.batch_size,
+            epochs=self.epochs,
+        )
 
     def forward(self, X):
         """
@@ -94,7 +96,7 @@ class Sequential:
         # Iterate through layers in reverse order
         for layer in reversed(self.layers):
             # Pass gradient through layer and get gradient for previous layer
-            current_gradient = layer.backward(current_gradient, self.alpha)
+            current_gradient = layer.backward(current_gradient)
 
     def __call__(self, X):
         """Allow model(X) syntax."""
@@ -128,6 +130,11 @@ class SequentialBuilder:
         self.batch_size = 1
         self.epochs_value = 1000
         self.loss_class = ls.MeanSquaredError()
+
+    def flatten(self):
+        """Add a Flatten layer."""
+        self.layers.append(b.Flatten())
+        return self
 
     def dense(self, input_size, output_size):
         """Add a Dense layer."""
