@@ -10,7 +10,7 @@ class ReLu(Layer):
         self.cache["X"] = X
         return np.maximum(0, X)
 
-    def backward(self, dL_dZ, alpha):
+    def backward(self, dL_dZ):
         """
         Backpropagate through ReLU activation.
         ReLU derivative: 1 if X > 0, else 0
@@ -29,7 +29,7 @@ class Sigmoid(Layer):
         self.cache["Z"] = 1 / (1 + np.exp(-X))
         return self.cache["Z"]
 
-    def backward(self, dL_dZ, alpha):
+    def backward(self, dL_dZ):
         """
         Backpropagate through Sigmoid activation.
         Sigmoid derivative: sigmoid(Z) * (1 - sigmoid(Z))
@@ -50,7 +50,7 @@ class Tanh(Layer):
         self.cache["Z"] = (e_x - e_neg_x) / (e_x + e_neg_x)
         return self.cache["Z"]
 
-    def backward(self, dL_dZ, alpha):
+    def backward(self, dL_dZ):
         """
         Backpropagate through Tanh activation.
         Tanh derivative: 1 - tanh(Z)^2
@@ -75,7 +75,7 @@ class Softmax(Layer):
         self.cache["Z"] = dividend / divisor
         return self.cache["Z"]
 
-    def backward(self, dL_dZ, alpha):
+    def backward(self, dL_dZ):
         """
         Backpropagate through Softmax activation.
         For softmax with cross-entropy loss, dL_dX = softmax(Z) - y_true
@@ -97,7 +97,7 @@ class ELU(Layer):
         self.cache["Z"] = np.where(X > 0, X, self.alpha_activation * (np.exp(X) - 1))
         return self.cache["Z"]
 
-    def backward(self, dL_dZ, alpha):
+    def backward(self, dL_dZ):
         """
         Backpropagate through ELU activation.
         ELU derivative: 1 if X > 0, else alpha * exp(X)

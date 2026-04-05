@@ -28,7 +28,7 @@ model = (
     .relu()
     .dense(8, 1)
     .sigmoid()
-    .optimizer("sgd")
+    .optimizer("adam")
     .loss(BinaryCrossEntropy())
     .batch(32)
     .alpha(0.1)

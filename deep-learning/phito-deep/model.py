@@ -9,7 +9,7 @@ class Sequential:
         self,
         *layers,
         alpha=0.01,
-        optimizer="sgd",
+        optimizer="adam",
         batch_size=1,
         epochs=1000,
         loss_class=ls.MeanSquaredError(),
@@ -48,12 +48,22 @@ class Sequential:
     def train(self, X, y):
         match self.optimizer:
             case "sgd":
-                losses = optimization.mini_batch_sgd(
+                losses = optimization.train_loop(
                     model=self,
                     X=X,
                     y=y,
+                    optimizer=optimization.SGD(alpha=self.alpha),
                     loss_class=self.loss_class,
-                    alpha=self.alpha,
+                    batch_size=self.batch_size,
+                    epochs=self.epochs,
+                )
+            case "adam":
+                losses = optimization.train_loop(
+                    model=self,
+                    X=X,
+                    y=y,
+                    optimizer=optimization.Adam(alpha=self.alpha),
+                    loss_class=self.loss_class,
                     batch_size=self.batch_size,
                     epochs=self.epochs,
                 )
@@ -94,7 +104,7 @@ class Sequential:
         # Iterate through layers in reverse order
         for layer in reversed(self.layers):
             # Pass gradient through layer and get gradient for previous layer
-            current_gradient = layer.backward(current_gradient, self.alpha)
+            current_gradient = layer.backward(current_gradient)
 
     def __call__(self, X):
         """Allow model(X) syntax."""
