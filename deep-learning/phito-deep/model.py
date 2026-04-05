@@ -48,29 +48,21 @@ class Sequential:
     def train(self, X, y):
         match self.optimizer:
             case "sgd":
-                losses = optimization.train_loop(
-                    model=self,
-                    X=X,
-                    y=y,
-                    optimizer=optimization.SGD(alpha=self.alpha),
-                    loss_class=self.loss_class,
-                    batch_size=self.batch_size,
-                    epochs=self.epochs,
-                )
+                optimizer = optimization.SGD(alpha=self.alpha)
             case "adam":
-                losses = optimization.train_loop(
-                    model=self,
-                    X=X,
-                    y=y,
-                    optimizer=optimization.Adam(alpha=self.alpha),
-                    loss_class=self.loss_class,
-                    batch_size=self.batch_size,
-                    epochs=self.epochs,
-                )
+                optimizer = optimization.Adam(alpha=self.alpha)
             case _:
                 raise ValueError(f"{self.optimizer} is not a valid optimizer.")
 
-        return losses
+        return optimization.train_loop(
+            model=self,
+            X=X,
+            y=y,
+            optimizer=optimizer,
+            loss_class=self.loss_class,
+            batch_size=self.batch_size,
+            epochs=self.epochs,
+        )
 
     def forward(self, X):
         """

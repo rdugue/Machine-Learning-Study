@@ -31,8 +31,8 @@ model = (
     .optimizer("adam")
     .loss(BinaryCrossEntropy())
     .batch(32)
-    .alpha(0.1)
-    .epochs(600)
+    .alpha(0.01)
+    .epochs(300)
     .build()
 )
 
