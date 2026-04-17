@@ -57,8 +57,6 @@ class DQNAgent:
         output_size,
         capacity,
         gamma=0.99,
-        epsilon=1.0,
-        epsilon_decay=0.995,
     ):
         self.rng = np.random.default_rng(67)
         self.input_size = input_size
@@ -67,12 +65,9 @@ class DQNAgent:
         self.target_network = self.q_network.copy()
         self.replay_buffer = ReplayBuffer(capacity)
         self.gamma = gamma
-        self.epsilon = epsilon
-        self.epsilon_min = 0.01
-        self.epsilon_decay = epsilon_decay
 
-    def select_action(self, state, training=True):
-        if training and self.rng.uniform() < self.epsilon:
+    def select_action(self, state, epsilon, training=True):
+        if training and self.rng.uniform() < epsilon:
             return self.rng.integers(0, self.output_size)
         q_values = self.q_network.predict(state)
         return np.argmax(q_values)
@@ -100,7 +95,6 @@ class DQNAgent:
         self.q_network.model.train(
             train_states, train_targets, test_states, test_targets
         )
-        self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
 
     def update_target_network(self):
         self.target_network = self.q_network.copy()

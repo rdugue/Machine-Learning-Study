@@ -14,34 +14,44 @@ from phito_rl.deep.qnetwork import DQNAgent
 
 env = gym.make("LunarLander-v3", render_mode="ansi")
 
-episodes = 1000
+episodes = 100
 input_size = env.observation_space.shape[0]
 output_size = env.action_space.n
-capacity = int(0.8 * episodes)
+capacity = int(100 * episodes)
 gamma = 0.99
 epsilon = 1.0
+epsilon_min = 0.01
+epsilon_decay = 0.99
 batch_size = int(0.4 * capacity)
+steps = 0
+warmup_steps = 100
 
-agent = DQNAgent(input_size, output_size, capacity, gamma, epsilon)
+agent = DQNAgent(input_size, output_size, capacity, gamma)
 
 for episode in range(episodes):
     state, _ = env.reset()
     done = False
     truncated = False
     while not done and not truncated:
-        action = agent.select_action(state, training=True)
+        action = agent.select_action(state, epsilon, training=True)
         next_state, reward, done, truncated, _ = env.step(action)
         agent.replay_buffer.push(state, action, reward, next_state, done or truncated)
         state = next_state
 
+        if len(agent.replay_buffer) >= warmup_steps:
+            agent.train(batch_size)
+            # os.system("clear")
+
+        if steps % 100 == 0:
+            agent.update_target_network()
+
+        steps += 1
+
+    print(f"steps: {steps}, epsilon: {epsilon:.2f}")
+    epsilon = max(epsilon_min, epsilon * epsilon_decay)
+
 env.close()
 
-for episode in range(episodes):
-    agent.train(batch_size)
-    os.system("clear")
-    if episode % 100 == 0:
-        agent.update_target_network()
-        print(f"Episode {episode}, epsilon: {agent.epsilon:.2f}")
 
 print("Training complete.")
 
@@ -50,7 +60,7 @@ state, _ = env.reset()
 done = False
 truncated = False
 while not done and not truncated:
-    action = agent.select_action(state, training=False)
+    action = agent.select_action(state, epsilon, training=False)
     next_state, reward, done, truncated, _ = env.step(action)
     state = next_state
 
