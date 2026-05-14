@@ -1,6 +1,7 @@
 import numpy as np
 from phitodeep.loss import MeanSquaredError
 from phitodeep.model import SequentialBuilder
+from phitodeep.optimization.optimizers import Adam
 
 
 class QNetwork:
@@ -13,10 +14,9 @@ class QNetwork:
             .relu()
             .dense(128, output_size)
             .loss(MeanSquaredError())
-            .optimizer("adam")
-            .alpha(0.001)
+            .optimizer(Adam())
+            .alpha(0.01)
             .epochs(150)
-            .batch(64)
             .build()
         )
 
@@ -31,7 +31,7 @@ class QNetwork:
 
 class ReplayBuffer:
     def __init__(self, buffer_size):
-        self.rng = np.random.default_rng(42)
+        self.rng = np.random.default_rng()
         self.buffer = []
         self.buffer_size = buffer_size
         self.pointer = 0
@@ -58,7 +58,7 @@ class DQNAgent:
         capacity,
         gamma=0.99,
     ):
-        self.rng = np.random.default_rng(67)
+        self.rng = np.random.default_rng()
         self.input_size = input_size
         self.output_size = output_size
         self.q_network = QNetwork(input_size, output_size)
