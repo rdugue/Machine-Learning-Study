@@ -14,7 +14,7 @@ from phito_rl.deep.qnetwork import DQNAgent
 
 env = gym.make("LunarLander-v3", render_mode="ansi")
 
-episodes = 100
+episodes = 50
 input_size = env.observation_space.shape[0]
 output_size = env.action_space.n
 capacity = int(100 * episodes)

@@ -1,5 +1,5 @@
 import numpy as np
-from phitodeep.loss import MeanSquaredError
+from phitodeep.loss import Huber
 from phitodeep.model import SequentialBuilder
 from phitodeep.optimization.optimizers import Adam
 
@@ -13,10 +13,10 @@ class QNetwork:
             .dense(input_size, 128)
             .relu()
             .dense(128, output_size)
-            .loss(MeanSquaredError())
+            .loss(Huber())
             .optimizer(Adam())
-            .alpha(0.01)
-            .epochs(150)
+            .alpha(0.001)
+            .epochs(100)
             .build()
         )
 
