@@ -12,7 +12,7 @@ if parent_dir not in sys.path:
 
 from phito_rl.deep.qnetwork import DQNAgent
 
-env = gym.make("LunarLander-v3", render_mode="ansi")
+env = gym.make("LunarLander-v3", render_mode="human")
 
 episodes = 600
 input_size = env.observation_space.shape[0]
@@ -21,8 +21,8 @@ capacity = 100000
 gamma = 0.99
 epsilon = 1.0
 epsilon_min = 0.01
-epsilon_decay = 0.99
-batch_size = 128
+epsilon_decay = 0.995
+batch_size =64
 steps = 0
 warmup_steps = 1000
 
@@ -35,7 +35,7 @@ for episode in range(episodes):
     while not done and not truncated:
         action = agent.select_action(state, epsilon, training=True)
         next_state, reward, done, truncated, _ = env.step(action)
-        agent.replay_buffer.push(state, action, reward, next_state, done or truncated)
+        agent.replay_buffer.push(state, action, reward, next_state, done)
         state = next_state
 
         if len(agent.replay_buffer) >= warmup_steps:
@@ -73,3 +73,5 @@ if reward >= 100:
     print("Success!")
 else:
     print("Failure!")
+print(f"Reward: {reward}")
+print(f"Epsilon: {epsilon}")
