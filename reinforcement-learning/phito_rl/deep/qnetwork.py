@@ -16,7 +16,7 @@ class QNetwork:
             .loss(Huber())
             .optimizer(Adam())
             .alpha(0.001)
-            .epochs(100)
+            .epochs(1)
             .build()
         )
 

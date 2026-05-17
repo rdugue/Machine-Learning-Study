@@ -14,17 +14,17 @@ from phito_rl.deep.qnetwork import DQNAgent
 
 env = gym.make("LunarLander-v3", render_mode="ansi")
 
-episodes = 50
+episodes = 600
 input_size = env.observation_space.shape[0]
 output_size = env.action_space.n
-capacity = int(100 * episodes)
+capacity = 100000
 gamma = 0.99
 epsilon = 1.0
 epsilon_min = 0.01
 epsilon_decay = 0.99
-batch_size = int(0.4 * capacity)
+batch_size = 128
 steps = 0
-warmup_steps = 100
+warmup_steps = 1000
 
 agent = DQNAgent(input_size, output_size, capacity, gamma)
 
@@ -42,7 +42,7 @@ for episode in range(episodes):
             agent.train(batch_size)
             # os.system("clear")
 
-        if steps % 100 == 0:
+        if steps % 1000 == 0:
             agent.update_target_network()
 
         steps += 1
@@ -54,6 +54,8 @@ env.close()
 
 
 print("Training complete.")
+
+input("Press any key to start simulation: ")
 
 env = gym.make("LunarLander-v3", render_mode="human")
 state, _ = env.reset()
